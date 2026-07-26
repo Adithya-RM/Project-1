@@ -1,0 +1,95 @@
+clear
+close all
+clc
+
+fs = 2000;
+t = -1:1/fs:1;
+
+rng(7)
+
+normal = 0.7*randn(size(t));
+normal = normal ...
+    + 7*exp(-((t+0.68)/0.06).^2) ...
+    - 4*exp(-((t+0.52)/0.03).^2) ...
+    + 2*sin(2*pi*18*t).*exp(-((t+0.75)/0.2).^2);
+
+athlete = 0.9*randn(size(t));
+athlete = athlete ...
+    + 2*sin(2*pi*12*t).*exp(-((t-0.15)/0.35).^2) ...
+    + 1.5*sin(2*pi*25*t).*exp(-((t-0.30)/0.30).^2);
+
+injured = 0.7*randn(size(t));
+injured = injured ...
+    + 6*exp(-((t+0.55)/0.08).^2) ...
+    - 5*exp(-((t+0.42)/0.03).^2) ...
+    + 4*exp(-((t-0.12)/0.05).^2) ...
+    + 2.5*exp(-((t-0.28)/0.04).^2);
+
+normal = normal-mean(normal);
+athlete = athlete-mean(athlete);
+injured = injured-mean(injured);
+
+wo = 50/(fs/2);
+bw = wo/35;
+[b,a] = iirnotch(wo,bw);
+
+normal = filtfilt(b,a,normal);
+athlete = filtfilt(b,a,athlete);
+injured = filtfilt(b,a,injured);
+
+wo = 100/(fs/2);
+bw = wo/35;
+[b,a] = iirnotch(wo,bw);
+
+normal = filtfilt(b,a,normal);
+athlete = filtfilt(b,a,athlete);
+injured = filtfilt(b,a,injured);
+
+[b,a] = butter(4,20/(fs/2),'high');
+
+normal = filtfilt(b,a,normal);
+athlete = filtfilt(b,a,athlete);
+injured = filtfilt(b,a,injured);
+
+[b,a] = butter(4,500/(fs/2),'low');
+
+normal = filtfilt(b,a,normal);
+athlete = filtfilt(b,a,athlete);
+injured = filtfilt(b,a,injured);
+
+normal = wdenoise(normal,5,'Wavelet','db4');
+athlete = wdenoise(athlete,5,'Wavelet','db4');
+injured = wdenoise(injured,5,'Wavelet','db4');
+
+normal = normal/max(abs(normal));
+athlete = athlete/max(abs(athlete));
+injured = injured/max(abs(injured));
+
+figure('Color','w','Position',[150 100 900 600])
+
+subplot(3,1,1)
+plot(t,normal,'b','LineWidth',1)
+grid on
+xlim([-1 1])
+ylim([-1 1])
+ylabel('Voltage (V)')
+title('Filtered — Normal')
+
+subplot(3,1,2)
+plot(t,athlete,'Color',[0 0.9 0],'LineWidth',1)
+grid on
+xlim([-1 1])
+ylim([-1 1])
+ylabel('Voltage (V)')
+title('Filtered — Athlete')
+
+subplot(3,1,3)
+plot(t,injured,'r','LineWidth',1)
+grid on
+xlim([-1 0.8])
+ylim([-1 1])
+ylabel('Voltage (V)')
+xlabel('Time (s)')
+title('Filtered — Injured Athlete')
+
+sgtitle('VAG Filtered Signals')

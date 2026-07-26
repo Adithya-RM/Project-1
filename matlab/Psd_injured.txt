@@ -1,0 +1,21 @@
+close all
+
+fs = 2000;
+
+window = hamming(256);
+noverlap = 128;
+nfft = 512;
+
+[Pxx,f] = pwelch(injured,window,noverlap,nfft,fs);
+
+figure('Color','w','Position',[200 120 650 500])
+
+plot(f,10*log10(Pxx),'LineWidth',1.4)
+
+grid on
+xlim([0 500])
+ylim([-48 -30])
+
+xlabel('Frequency (Hz)')
+ylabel('Power (dB)')
+title('PSD — Injured Athlete Knee')
