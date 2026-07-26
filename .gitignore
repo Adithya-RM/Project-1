@@ -1,0 +1,7 @@
+# Ignore PDF report as requested
+*.pdf
+Bio Signal Analysis Submission P.pdf
+
+# OS generated files
+.DS_Store
+Thumbs.db
