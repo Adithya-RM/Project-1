@@ -23,7 +23,7 @@ Vibroarthrography (VAG) is an advanced non-invasive biomechanical diagnostic tec
 
 The end-to-end signal processing and hardware acquisition workflow proceeds through five sequential modules:
 
-![System Workflow](images/workflow.png)
+![System Workflow](images/Flow-chart.png)
 
 ---
 
